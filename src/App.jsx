@@ -68,10 +68,10 @@ function App() {
         })
         .then(async (blob) => {
           const image = new Image();
-          image.src = URL.createObjectURL(blob);
-          uploadToCloudinary(blob);
-          console.log(image.src);
-          return image.src;
+          // image.src = URL.createObjectURL(blob);
+          const cloudinaryURL = await uploadToCloudinary(blob);
+          console.log(cloudinaryURL);
+          return cloudinaryURL;
         });
       // console.log(model);
       setUrl(response);
