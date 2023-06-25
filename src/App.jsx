@@ -1,14 +1,16 @@
 import { HfInference } from "@huggingface/inference";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Cloudinary } from "@cloudinary/url-gen";
+import axios from "axios";
 
 function App() {
-  const cld = new Cloudinary({ cloud: { cloudName: "dqwkje1he" } });
-  cld.config({
-    cloud_name: "dqwkje1he",
-    api_key: import.meta.env.VITE_CI_API_KEY,
-    api_secret: import.meta.env.VITE_CI_API_SECRET,
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName: "dqwkje1he",
+      apiKey: import.meta.env.VITE_CI_API_KEY,
+      apiSecret: import.meta.env.VITE_CI_API_SECRET,
+    },
   });
 
   const hf = new HfInference(import.meta.env.VITE_HF_API_KEY);
@@ -25,6 +27,31 @@ function App() {
   );
 
   const size = 512;
+
+  //// CLOUDINARY UPLOAD
+  const uploadToCloudinary = async (blob) => {
+    const formData = new FormData();
+    formData.append("file", blob);
+    formData.append("upload_preset", "uploadtoCloudinary");
+    let data = "";
+    await axios
+      .post(
+        `https://api.cloudinary.com/v1_1/${
+          cld.getConfig().cloud.cloudName
+        }/image/upload`,
+        formData
+      )
+      .then((res, err) => {
+        try {
+          data = res.data["secure_url"];
+        } catch {
+          console.log(err);
+        }
+      });
+    // console.log(data);
+    return data;
+  };
+
   const render = async () => {
     console.log("render started");
     if (prompt === "") alert("enter a propmt please");
@@ -39,9 +66,10 @@ function App() {
             negative_prompt: negPrompt,
           },
         })
-        .then((blob) => {
+        .then(async (blob) => {
           const image = new Image();
           image.src = URL.createObjectURL(blob);
+          uploadToCloudinary(blob);
           console.log(image.src);
           return image.src;
         });
@@ -53,6 +81,7 @@ function App() {
     }
     console.log("render ended");
   };
+
   return (
     <main
       style={{
