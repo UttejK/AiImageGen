@@ -17,6 +17,7 @@ function App() {
 
   const size = 512;
   const render = async () => {
+    console.log("render started");
     if (prompt === "") alert("enter a propmt please");
     else {
       let response = await hf
@@ -32,31 +33,17 @@ function App() {
         .then((blob) => {
           const image = new Image();
           image.src = URL.createObjectURL(blob);
-
+          console.log(image.src);
           return image.src;
         });
-      console.log(model);
+      // console.log(model);
       setUrl(response);
-      console.log(response);
+      // console.log(response);
       // document.getElementsByClassName("promptInput")[0].value = "";
       setLoading(false);
     }
+    console.log("render ended");
   };
-
-  const [num, setNum] = useState(0);
-
-  useEffect(() => {
-    // 👇️ only runs once
-    // uncomment the below before build
-    // render();
-
-    function incrementNum() {
-      setNum((prev) => prev + 1);
-    }
-
-    incrementNum();
-  }, []); // 👈️ empty dependencies array
-
   return (
     <main
       style={{
@@ -84,8 +71,8 @@ function App() {
                 justifyContent: "center",
               }}
             >
-              <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
               </div>
             </div>
           </>
@@ -110,20 +97,24 @@ function App() {
           className="promptInput"
           type="text"
           placeholder="Please enter the Prompt"
+          onChange={(e) => {
+            console.log("prompt:", e.target.value);
+            setPrompt(e.target.value);
+          }}
         />
         <input
           className="promptInput"
           type="text"
           placeholder="Please enter the Negative prompt"
+          onChange={(e) => {
+            console.log("negPrompt:", e.target.value);
+            setNegPrompt(e.target.value);
+          }}
         />
         <button
           className="btn btn-primary"
           type="submit"
           onClick={() => {
-            setPrompt(document.getElementsByClassName("promptInput")[0].value);
-            setNegPrompt(
-              document.getElementsByClassName("promptInput")[1].value
-            );
             setLoading(true);
             render();
           }}
