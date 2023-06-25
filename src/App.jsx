@@ -1,7 +1,16 @@
 import { HfInference } from "@huggingface/inference";
 import { useEffect, useState } from "react";
 
+import { Cloudinary } from "@cloudinary/url-gen";
+
 function App() {
+  const cld = new Cloudinary({ cloud: { cloudName: "dqwkje1he" } });
+  cld.config({
+    cloud_name: "dqwkje1he",
+    api_key: import.meta.env.VITE_CI_API_KEY,
+    api_secret: import.meta.env.VITE_CI_API_SECRET,
+  });
+
   const hf = new HfInference(import.meta.env.VITE_HF_API_KEY);
   const [prompt, setPrompt] = useState("Golden Temple of India");
 
