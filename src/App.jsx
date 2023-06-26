@@ -50,7 +50,7 @@ function App() {
         try {
           data = res.data["secure_url"];
         } catch {
-          // console.log(err);
+          console.error(err);
         }
       });
     // console.log(data);
@@ -72,7 +72,7 @@ function App() {
           },
         })
         .then(async (blob) => {
-          const image = new Image();
+          // const image = new Image();
           // image.src = URL.createObjectURL(blob);
           const cloudinaryURL = await uploadToCloudinary(blob);
           // console.log(cloudinaryURL);
